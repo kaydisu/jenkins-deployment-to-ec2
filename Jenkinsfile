@@ -1,6 +1,6 @@
 #!/usr/bin.env groovy
 
-pipeline {   
+pipeline {
     agent any
     stages {
         stage("test") {
@@ -22,9 +22,12 @@ pipeline {
         stage("deploy") {
             steps {
                 script {
-                    echo "Deploying the application..."
+                    def dockerCmd = 'docker run -p 3000:3080 -d ebony9ja/aws-docker:1.0'
+                    sshagent(['ec2-user-key']) {
+                        sh "ssh -o StrictHostKeyChecking=no ec2-user@18.184.54.160 ${dockerCmd}"
+                    }
                 }
             }
-        }               
+        }
     }
 } 
